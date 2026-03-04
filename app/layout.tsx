@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
-import Header from "./components/header";
-import Footer from "./components/footer";
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+// import Header from "./components/header";
+// import Footer from "./components/footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,14 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased text-sm text-zinc-900 dark:text-gray-100 bg-[#E5E8EC] dark:bg-zinc-900 min-h-screen`}
+        className={`${inter.variable} text-sm text-zinc-900 bg-[#E5E8EC] min-h-screen`}
       >
-        <Header />
+        {/* <Header /> */}
         {children}
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
 }
-
-// ${geistSans.variable} ${geistMono.variable} antialiased
