@@ -1,18 +1,30 @@
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import BackgroundPattern from "@/components/background-pattern";
+import PetContextProvider from "@/contexts/pet-context-provider";
+import { Pet } from "@/lib/types";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  // Get the pets
+  const response = await fetch("https://bytegrad.com/course-assets/projects/petsoft/api/pets");
+  if (!response.ok) {
+    throw new Error("Failed to fetch data");
+  }
+  const data: Pet[] = await response.json();
+  console.log(data);
   return (
     <>
       <BackgroundPattern />
       <div className="flex flex-col min-h-screen max-w-[1050px] mx-auto px-4">
         <AppHeader />
-        {children}
+        <PetContextProvider data={data}>
+          {children}
+        </PetContextProvider>
         <AppFooter />
       </div>
     </>
