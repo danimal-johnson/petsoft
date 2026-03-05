@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
-// import Header from "./components/header";
-// import Footer from "./components/footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,9 +22,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} text-sm text-zinc-900 bg-[#E5E8EC] min-h-screen`}
       >
-        {/* <Header /> */}
         {children}
-        {/* <Footer /> */}
       </body>
     </html>
   );
