@@ -1,15 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { Pet } from "@/lib/types";
 import { usePetContext } from "@/lib/hooks";
+import { useSearchContext } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
+import { Pet } from "@/lib/types";
 
 export default function PetList() {
-  const { pets, selectedPetId, handleSelectedPetId } = usePetContext();
+  const { selectedPetId, handleSelectedPetId } = usePetContext();
+  const { pets } = usePetContext();
+  const { searchQuery } = useSearchContext();
+
+  const filteredPets: Pet[] = pets.filter((pet) =>
+    pet.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <ul className="bg-white border-b border-light">
-      {pets.map((pet) => (
+      {filteredPets.map((pet) => (
         <li key={pet.id}>
           <button
             className={cn("flex h-17.5 w-full items-center px-4 cursor-pointer text-base hover:bg-[#EFF1F2] focus:bg-[#EFF1F2] transition",
@@ -31,5 +39,5 @@ export default function PetList() {
         </li>
       ))}
     </ul>
-      )
+  );
 }
