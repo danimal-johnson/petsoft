@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Pet } from "@/lib/types";
 
 export default function PetList() {
-  const { selectedPetId, handleSelectedPetId } = usePetContext();
+  const { selectedPetId, handleChangeSelectedPetId } = usePetContext();
   const { pets } = usePetContext();
   const { searchQuery } = useSearchContext();
 
@@ -25,10 +25,10 @@ export default function PetList() {
                 "bg-[#EFF1F2]" : selectedPetId === pet.id,
               }
             )}
-            onClick={() => handleSelectedPetId(pet.id)}
+            onClick={() => handleChangeSelectedPetId(pet.id)}
           >
             <Image
-              src={pet.imageUrl}
+              src={pet.imageUrl || "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"}
               alt="Pet Image"
               width={45}
               height={45}

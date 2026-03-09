@@ -24,11 +24,11 @@ export default function PetDetails() {
 }
 function TopBar({ pet }: { pet: Pet }) {
   const { handleCheckoutPet } = usePetContext();
-
+  console.log("Selected pet in TopBar:", pet);
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
-        src={pet?.imageUrl || "" }
+        src={pet?.imageUrl || "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png" }
         alt="Pet Image"
         width={75} height={75}
         className="h-[75px] w-[75px] object-cover rounded-full"
@@ -39,7 +39,10 @@ function TopBar({ pet }: { pet: Pet }) {
         <PetButton actionType="edit">Edit</PetButton>
         <PetButton
           actionType="checkout"
-          onClick={() => handleCheckoutPet(pet?.id)}>Checkout</PetButton>
+          onClick={() => handleCheckoutPet(pet?.id)}
+        >
+            Checkout
+        </PetButton>
       </div>
     </div>
   );

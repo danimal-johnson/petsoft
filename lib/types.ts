@@ -3,6 +3,6 @@ export type Pet = {
     name: string;
     ownerName: string;
     age: number;
-    imageUrl: string;
+    imageUrl?: string;
     notes: string;
 };
