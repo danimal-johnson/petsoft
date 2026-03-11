@@ -25,7 +25,7 @@ export default function PetDetails() {
   )
 }
 function TopBar({ pet }: { pet: Pet }) {
-  // const { handleCheckoutPet } = usePetContext();
+  const { handleCheckoutPet } = usePetContext();
   const [isPending, startTransition] = useTransition();
   console.log("Selected pet in TopBar:", pet);
   return (
@@ -44,9 +44,7 @@ function TopBar({ pet }: { pet: Pet }) {
           actionType="checkout"
           disabled={isPending}
           onClick={async () => {
-            startTransition(async () => {
-              await deletePet(pet?.id);
-            });
+              await handleCheckoutPet(pet.id);
           }}
         >
             Checkout

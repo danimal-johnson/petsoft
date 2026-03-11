@@ -8,10 +8,10 @@ import { Pet } from "@/lib/types";
 
 export default function PetList() {
   const { selectedPetId, handleChangeSelectedPetId } = usePetContext();
-  const { pets } = usePetContext();
+  const { optimisticPets } = usePetContext();
   const { searchQuery } = useSearchContext();
 
-  const filteredPets: Pet[] = pets.filter((pet) =>
+  const filteredPets: Pet[] = optimisticPets.filter((pet) =>
     pet.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

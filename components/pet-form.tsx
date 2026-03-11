@@ -4,8 +4,8 @@ import { usePetContext } from "@/lib/hooks";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { addPet, editPet } from "@/actions/actions";
-import { toast } from "sonner";
+// import { addPet, editPet } from "@/actions/actions";
+// import { toast } from "sonner";
 import PetFormButton from "./pet-form-btn";
 // import { useFormState } from "react-dom";
 
@@ -15,7 +15,7 @@ type PetFormProps = {
 };
 
 export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
-  const { selectedPet } = usePetContext();
+  const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
   // useFormState(addPet, {
   //   onSuccess: () => {
   //     toast.success(`Pet ${actionType === "add" ? "added" : "edited"} successfully!`);
@@ -25,41 +25,23 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
   //     toast.error(`Failed to ${actionType === "add" ? "add" : "edit"} pet. Please try again.`);
   //   }
   // });
-  // const { handleAddPet, handleEditPet, selectedPet } = useContext(PetContext)!;
-  // const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-    
-  //   const formData = new FormData(e.currentTarget);
-  //   const petData = {
-  //     name: formData.get("name") as string,
-  //     ownerName: formData.get("ownerName") as string,
-  //     imageUrl:
-  //       (formData.get("imageUrl") as string) || 
-  //       "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-  //     age: Number(formData.get("age")),
-  //     notes: formData.get("notes") as string,
-  //   };
-  //   if (actionType === "edit" && selectedPet) {
-  //     // handleEditPet(selectedPet.id, petData as Omit<Pet, "id">);
-  //     console.log("Edited pet:", { ...petData, id: selectedPet.id });
-  //   } else {
-  //     // handleAddPet(petData as Omit<Pet, "id">);
-  //     addPet(new FormData(e.currentTarget));
-  //   }
-  //   onFormSubmission();
-  // }
 
   return (
     <form className="flex flex-col"
       action={async(formData) => {
-        let error;
-        if (actionType === "edit" && selectedPet) {
-          error = await editPet(selectedPet.id, formData);
-        } else {
-          error = await addPet(formData);
+        const petData = {
+          name: formData.get("name") as string,
+          ownerName: formData.get("ownerName") as string,
+          imageUrl: formData.get("imageUrl") as string ||
+            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+          age: Number(formData.get("age")),
+          notes: formData.get("notes") as string,
         }
-        if (error) {
-          toast.warning("Failed to add pet. Please try again.");
+
+        if (actionType === "add") {
+          await handleAddPet(petData);
+        } else if (actionType === "edit") {
+          await handleEditPet(selectedPet!.id, petData);
         }
         onFormSubmission();
       }
