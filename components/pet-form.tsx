@@ -28,7 +28,8 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
   return (
     <form className="flex flex-col"
-      action={async(formData) => {
+    action={async(formData) => {
+        onFormSubmission();
         const petData = {
           name: formData.get("name") as string,
           ownerName: formData.get("ownerName") as string,
@@ -43,7 +44,6 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
         } else if (actionType === "edit") {
           await handleEditPet(selectedPet!.id, petData);
         }
-        onFormSubmission();
       }
     }>
       <div className="space-y-3">

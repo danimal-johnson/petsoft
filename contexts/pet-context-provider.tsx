@@ -34,7 +34,13 @@ export default function PetContextProvider({ data, children }:
   // State
   // const [pets, setPets] = useState<Pet[]>(data);
   const [selectedPetId, setSelectedPetId] = useState<Pet["id"] | null>(null);
-  const [optimisticPets, setOptimisticPets] = useOptimistic(data);
+  const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, newPet) => {
+    return [...state,
+      { ...newPet,
+        id: `temp-id-${Date.now()}`,
+      }
+    ];
+  });
 
   // Derived State
   const selectedPet = optimisticPets.find((pet) => pet.id === selectedPetId);
@@ -42,7 +48,8 @@ export default function PetContextProvider({ data, children }:
 
   // Handlers
   const handleAddPet = async (newPet: Omit<Pet, "id">) => {
-    setOptimisticPets((prev) => [...prev, { ...newPet, id: `temp-id-${Date.now()}` }]);
+    // setOptimisticPets((prev) => [...prev, { ...newPet, id: `temp-id-${Date.now()}` }]);
+    setOptimisticPets(newPet);
     const error = await addPet(newPet);
     if (error) {
       toast.warning("Failed to add pet. Please try again.");

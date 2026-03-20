@@ -12,6 +12,7 @@ import {
 } from "./ui/dialog";
 import PetForm from "./pet-form";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 
 type PetButtonProps = {
   actionType: "add" | "edit" | "checkout";
@@ -50,7 +51,11 @@ export default function PetButton({ actionType, disabled, onClick, children }: P
         </DialogHeader>
           <PetForm
             actionType={actionType}
-            onFormSubmission={() => setIsFormOpen(false)}
+            onFormSubmission={() => {
+              flushSync(() => {
+                setIsFormOpen(false);
+              });
+            }}
           />
       </DialogContent>
     </Dialog>
