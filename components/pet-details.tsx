@@ -35,7 +35,7 @@ function TopBar({ pet }: { pet: Pet }) {
         alt="Pet Image"
         width={75} height={75}
         className="h-[75px] w-[75px] object-cover rounded-full"
-      />    
+      />
       <h2 className="text-3xl font-semibold leading-7 ml-5">{pet?.name}</h2>
 
       <div className="ml-auto flex items-center gap-3">

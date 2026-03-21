@@ -34,13 +34,23 @@ export default function PetContextProvider({ data, children }:
   // State
   // const [pets, setPets] = useState<Pet[]>(data);
   const [selectedPetId, setSelectedPetId] = useState<Pet["id"] | null>(null);
-  const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, newPet) => {
-    return [...state,
-      { ...newPet,
-        id: `temp-id-${Date.now()}`,
+  const [optimisticPets, setOptimisticPets] = useOptimistic(
+    data,
+    (state, { action, payload }) => {
+      switch (action) {
+        case "add":
+          return [...state, { ...payload, id: `temp-id-${Date.now()}` }];
+        case "edit":
+          return state.map((pet) =>
+            pet.id === payload.petId ? { ...pet, ...payload.updatedPet } : pet
+          );
+        case "delete":
+          return state.filter((pet) => pet.id !== payload);
+        default:
+          return state;
       }
-    ];
-  });
+    }
+  );
 
   // Derived State
   const selectedPet = optimisticPets.find((pet) => pet.id === selectedPetId);
@@ -49,7 +59,8 @@ export default function PetContextProvider({ data, children }:
   // Handlers
   const handleAddPet = async (newPet: Omit<Pet, "id">) => {
     // setOptimisticPets((prev) => [...prev, { ...newPet, id: `temp-id-${Date.now()}` }]);
-    setOptimisticPets(newPet);
+    // setOptimisticPets(newPet);
+    setOptimisticPets({ action: "add", payload: newPet });
     const error = await addPet(newPet);
     if (error) {
       toast.warning("Failed to add pet. Please try again.");
@@ -57,6 +68,7 @@ export default function PetContextProvider({ data, children }:
     }
   };
   const handleEditPet = async (petId: string, updatedPet: Omit<Pet, "id">) => {
+    setOptimisticPets({ action: "edit", payload: { petId, updatedPet } });
     const error = await editPet(petId, updatedPet);
     if (error) {
     toast.warning(error.message);
@@ -64,7 +76,12 @@ export default function PetContextProvider({ data, children }:
     }
   };
   const handleCheckoutPet = async (petId: string) => {
-    await deletePet(petId);
+    setOptimisticPets({ action: "delete", payload: petId });
+    const error = await deletePet(petId);
+    if (error) {
+      toast.warning("Failed to checkout pet. Please try again.");
+      return;
+    }
     setSelectedPetId(null);
   };
   const handleChangeSelectedPetId = (id: Pet["id"] | null) => {
