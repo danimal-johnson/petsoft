@@ -1,13 +1,9 @@
 "use client";
 
 import { createContext, useOptimistic, useState } from "react";
-// import { Pet } from "@/lib/types";
-import type { Pet as PetModel } from "@/lib/generated/prisma/browser";
+import type { Pet } from "@/lib/types";
 import { toast } from "sonner";
 import { addPet, deletePet, editPet } from "@/actions/actions";
-// import { addPet } from "@/actions/actions";
-
-type Pet = Omit<PetModel, "createdAt" | "updatedAt">;
 
 type TPetContext = {
   // pets: Pet[];

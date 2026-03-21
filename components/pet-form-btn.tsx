@@ -1,10 +1,12 @@
-import { useFormStatus } from "react-dom";
 import { Button } from "./ui/button";
 
-export default function PetFormButton({ actionType }: { actionType: "add" | "edit" }) {
-  const { pending } = useFormStatus();
+type PetFormButtonProps = {
+  actionType: "add" | "edit";
+};
+
+export default function PetFormButton({ actionType }: PetFormButtonProps) {
   return (
-    <Button type="submit" className="mt-5 self-end" disabled={pending}>
+    <Button type="submit" className="mt-5 self-end">
       {actionType === "edit" ? "Update" : "Add"}
     </Button>
   )
