@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { DEFAULT_PET_IMAGE_URL } from "./constants";
 
+export const petIdSchema = z.string("Pet ID must be a string");
+
 export const petFormSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
   ownerName: z.string().trim().min(1, "Owner name is required"),

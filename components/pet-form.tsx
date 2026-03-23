@@ -25,7 +25,14 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
       errors
     }
   } = useForm<PetFormInput, PetFormOutput>({
-    resolver: zodResolver(petFormSchema)
+    resolver: zodResolver(petFormSchema),
+    defaultValues: {
+      name: selectedPet?.name,
+      ownerName: selectedPet?.ownerName,
+      imageUrl: selectedPet?.imageUrl,
+      age: selectedPet?.age,
+      notes: selectedPet?.notes,
+    }
   });
 
   return (
@@ -87,7 +94,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
             id="age"
             {...register("age", { valueAsNumber: true })}
             // defaultValue={actionType === "edit" ? selectedPet?.age.toString() : ""}
-            defaultValue={actionType === "edit" ? selectedPet?.age : undefined}
+            // defaultValue={actionType === "edit" ? selectedPet?.age : undefined}
           />
           {errors.age && <p className="text-red-500 text-sm">{errors.age.message}</p>}
         </div>
