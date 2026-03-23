@@ -3,14 +3,23 @@
 import prisma from "@/lib/db";
 import type { Pet } from "@/lib/types";
 import { sleep } from "@/lib/utils";
+import { petFormSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 export async function addPet(pet: Omit<Pet, "id">) {
   await sleep(1000);
 
+  const parsedPet = petFormSchema.safeParse(pet);
+  if (!parsedPet.success) {
+    return {
+      message: "Invalid pet data",
+      error: parsedPet.error,
+    }
+  }
+
   try {
     await prisma.pet.create({
-      data: pet,
+      data: parsedPet.data,
     });
   } catch (error) {
     return {

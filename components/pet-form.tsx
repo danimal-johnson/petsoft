@@ -6,34 +6,13 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import PetFormButton from "./pet-form-btn";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { petFormSchema, PetFormInput, PetFormOutput } from "@/lib/validations";
 
 type PetFormProps = {
   actionType: "add" | "edit";
   onFormSubmission: () => void;
 };
-
-const petFormSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  ownerName: z.string().trim().min(1, "Owner name is required"),
-  imageUrl: z.union([
-    z.literal(""),
-    z.string().trim().url("Image must be a valid URL"),
-  ]),
-  age: z.coerce.number()
-    .min(0, "Age must be a positive number")
-    .max(200, "Age must be less than 200"),
-  notes: z.union([
-    z.literal(""),
-    z.string().trim().max(1000),
-  ]),
-});
-
-type PetFormInput = z.input<typeof petFormSchema>;
-type PetFormOutput = z.output<typeof petFormSchema>;
-// type TPetForm = z.infer<typeof petFormSchema>;
-
 
 export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
   const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
@@ -41,6 +20,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
   const {
     register,
     trigger,
+    getValues,
     formState: {
       errors
     }
@@ -50,20 +30,21 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
   return (
     <form className="flex flex-col"
-      action={async(formData) => {
+      action={async() => {
         const isValid = await trigger();
         if (!isValid) return;
 
         onFormSubmission();
 
-        const petData = {
-          name: formData.get("name") as string,
-          ownerName: formData.get("ownerName") as string,
-          imageUrl: formData.get("imageUrl") as string ||
-            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-          age: Number(formData.get("age")),
-          notes: formData.get("notes") as string,
-        }
+        // const petData = {
+        //   name: formData.get("name") as string,
+        //   ownerName: formData.get("ownerName") as string,
+        //   imageUrl: formData.get("imageUrl") as string ||
+        //     DEFAULT_PET_IMAGE_URL,
+        //   age: Number(formData.get("age")),
+        //   notes: formData.get("notes") as string,
+        // };
+        const petData = petFormSchema.parse(getValues());
 
         if (actionType === "add") {
           await handleAddPet(petData);
@@ -104,9 +85,11 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
           <Label htmlFor="age">Age</Label>
           <Input
             id="age"
-            {...register("age")}
-            defaultValue={actionType === "edit" ? selectedPet?.age.toString() : ""}
+            {...register("age", { valueAsNumber: true })}
+            // defaultValue={actionType === "edit" ? selectedPet?.age.toString() : ""}
+            defaultValue={actionType === "edit" ? selectedPet?.age : undefined}
           />
+          {errors.age && <p className="text-red-500 text-sm">{errors.age.message}</p>}
         </div>
         <div className="space-y-1">
           <Label htmlFor="notes">Notes</Label>
