@@ -6,19 +6,34 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import PetFormButton from "./pet-form-btn";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type PetFormProps = {
   actionType: "add" | "edit";
   onFormSubmission: () => void;
 };
 
-type TPetForm = {
-  name: string;
-  ownerName: string;
-  imageUrl: string;
-  age: number;
-  notes: string;
-}
+const petFormSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  ownerName: z.string().trim().min(1, "Owner name is required"),
+  imageUrl: z.union([
+    z.literal(""),
+    z.string().trim().url("Image must be a valid URL"),
+  ]),
+  age: z.coerce.number()
+    .min(0, "Age must be a positive number")
+    .max(200, "Age must be less than 200"),
+  notes: z.union([
+    z.literal(""),
+    z.string().trim().max(1000),
+  ]),
+});
+
+type PetFormInput = z.input<typeof petFormSchema>;
+type PetFormOutput = z.output<typeof petFormSchema>;
+// type TPetForm = z.infer<typeof petFormSchema>;
+
 
 export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
   const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
@@ -29,14 +44,18 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
     formState: {
       errors
     }
-  } = useForm<TPetForm>();
+  } = useForm<PetFormInput, PetFormOutput>({
+    resolver: zodResolver(petFormSchema)
+  });
 
   return (
     <form className="flex flex-col"
-    action={async(formData) => {
+      action={async(formData) => {
         const isValid = await trigger();
         if (!isValid) return;
+
         onFormSubmission();
+
         const petData = {
           name: formData.get("name") as string,
           ownerName: formData.get("ownerName") as string,
@@ -59,10 +78,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
           <Input
             id="name"
             defaultValue={actionType === "edit" ? selectedPet?.name : ""}
-            {...register("name", { 
-              required: "Name is required",
-              minLength: { value: 3, message: "Name must be at least 3 characters" },
-            })}
+            {...register("name")}
           />
           {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
         </div>
@@ -71,7 +87,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
           <Input
             id="ownerName"
             defaultValue={actionType === "edit" ? selectedPet?.ownerName : ""}
-            {...register("ownerName", { required: "Owner Name is required" })}
+            {...register("ownerName")}
           />
           {errors.ownerName && <p className="text-red-500 text-sm">{errors.ownerName.message}</p>}
         </div>
@@ -88,7 +104,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
           <Label htmlFor="age">Age</Label>
           <Input
             id="age"
-            {...register("age", { required: "Age is required" })}
+            {...register("age")}
             defaultValue={actionType === "edit" ? selectedPet?.age.toString() : ""}
           />
         </div>
@@ -97,7 +113,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
           <Textarea
             id="notes"
             defaultValue={actionType === "edit" ? selectedPet?.notes : ""}
-            {...register("notes", { required: "Notes are required" })}
+            {...register("notes")}
           />
           {errors.notes && <p className="text-red-500 text-sm">{errors.notes.message}</p>}
         </div>
