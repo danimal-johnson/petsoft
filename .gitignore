@@ -43,3 +43,6 @@ next-env.d.ts
 # Development resources
 /dev-resources
 /lib/generated/prisma
+
+# Local development database
+dev.db
