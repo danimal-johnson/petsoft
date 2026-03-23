@@ -15,6 +15,12 @@ export default async function AppLayout({
 
   // Get the pets
   const pets: Pet[] = await prisma.pet.findMany();
+  const user = await prisma.user.findUnique({
+    where: {
+      email: "user@example.com", // Put include: pets line here?
+    },
+    include: { pets: true },
+  });
 
   return (
     <>
