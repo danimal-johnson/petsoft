@@ -1,12 +1,11 @@
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-
-export function proxy(request: Request) {
-  request.headers.set("X-Forwarded-For", "<IP_ADDRESS>");
-  console.log(request.url);
-  return NextResponse.next();
-}
+export default NextAuth(authOptions).auth;
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/app/:path*"],
 };
+// export const config = {
+//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+// };

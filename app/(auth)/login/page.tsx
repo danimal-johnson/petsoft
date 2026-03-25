@@ -6,7 +6,7 @@ export default function Login() {
   return (
     <main className ="flex flex-col gap-y-5 justify-center items-center">
       <H1>Log In</H1>
-      <AuthForm />
+      <AuthForm method="login"/>
       <p>No account yet?{" "}
         <Link href="/signup" className="mt-6 font-medium text-zinc-500">Sign up</Link>
       </p>

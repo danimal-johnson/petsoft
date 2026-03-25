@@ -36,3 +36,10 @@ export const petFormSchema = z.object({
 export type PetFormInput = z.input<typeof petFormSchema>;
 export type PetFormOutput = z.output<typeof petFormSchema>;
 export type TPetForm = z.infer<typeof petFormSchema>;
+
+export const authSchema = z.object({
+  email: z.string().email().max(100),
+  password: z.string().max(100),
+});
+
+export type TAuth = z.infer<typeof authSchema>;
