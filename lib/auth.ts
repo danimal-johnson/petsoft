@@ -1,5 +1,4 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
-// import CredentialsProvider from "next-auth/providers/credentials";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/db";
@@ -44,27 +43,27 @@ export const authOptions = {
           password,
           user.hashedPassword
         );
-
         if (!passwordIsValid) {
           console.log("Invalid credentials");
           return null;
         }
 
         return user;
-          // { id: user.id,
-          // email: user.email, }
       },
     }),
   ],
   callbacks: {
-    // authorized: ({request}) => {
-    //   const isTryingToAccessApp = request.nextUrl.pathname.startsWith("/app");
+    authorized: ({auth, request}) => {
+      const isLoggedIn = !!auth?.user;
+      const isTryingToAccessApp = request.nextUrl.pathname.startsWith("/app");
 
-    //   if (isTryingToAccessApp) {
-    //     return !!request.headers.get("authorization");
-    //   }
-    //   return true;
-    // },
+      if (!isLoggedIn && isTryingToAccessApp) return false;
+      if (isLoggedIn && isTryingToAccessApp) return true;
+      if (isLoggedIn && !isTryingToAccessApp) {
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
@@ -84,5 +83,6 @@ export const authOptions = {
 export const {
   auth,
   signIn,
+  signOut,
   handlers: { GET, POST },
 } = NextAuth(authOptions);

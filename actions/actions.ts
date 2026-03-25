@@ -6,22 +6,28 @@ import { petFormSchema, petIdSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 // import { signIn } from "next-auth";
-import { auth, signIn } from "@/lib/auth";
+import { auth, signIn, signOut } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 // === User Actions ===
 
 export async function logIn(formData: FormData) {
   console.log(formData);
   const authData = Object.fromEntries(formData.entries());
-  const { email, password } = authData;
-  console.log({ email, password });
+  // const { email, password } = authData;
+  // console.log({ email, password });
 
-  await signIn("credentials", { 
-    email,
-    password,
-    redirect: true,
-    callbackUrl: "/app/dashboard"
-  }); // authData
+  // await signIn("credentials", { 
+  //   email,
+  //   password,
+  //   redirect: true,
+  //   callbackUrl: "/app/dashboard"
+  // }); // authData
+
+  await signIn("credentials", authData);
+  console.log("About to redirect");
+  redirect("/app/dashboard");
+  console.log("Redirected");
 }
 
 export async function signUp(formData: FormData) {
@@ -38,6 +44,10 @@ export async function signUp(formData: FormData) {
   });
 
   // await signUp("credentials", { email, hashedPassword }); // authData
+}
+
+export async function logOut() {
+  await signOut({ redirectTo: "/"});
 }
 
 // === Pet Actions ===
