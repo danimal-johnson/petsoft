@@ -6,6 +6,8 @@ import { Pet } from "@/lib/types";
 import SearchContextProvider from "@/contexts/search-context-provider";
 import prisma from "@/lib/db";
 import { Toaster } from "@/components/ui/sonner";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function AppLayout({
   children,
@@ -13,14 +15,21 @@ export default async function AppLayout({
   children: React.ReactNode;
 }>) {
 
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   // Get the pets
-  const pets: Pet[] = await prisma.pet.findMany();
-  const user = await prisma.user.findUnique({
-    where: {
-      email: "user@example.com", // Put include: pets line here?
-    },
-    include: { pets: true },
+  const pets: Pet[] = await prisma.pet.findMany({
+    where: { userId: session.user.id }
   });
+  // const user = await prisma.user.findUnique({
+  //   where: {
+  //     email: "user@example.com", // FIXME: use session data to get the email of the logged in user
+  //   },
+  //   include: { pets: true },
+  // });
 
   return (
     <>

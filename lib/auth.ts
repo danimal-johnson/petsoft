@@ -62,7 +62,8 @@ export const authOptions = {
       if (isLoggedIn && !isTryingToAccessApp) {
         return Response.redirect(new URL("/app/dashboard", request.nextUrl));
       }
-      return true;
+      if (!isLoggedIn && !isTryingToAccessApp) return true;
+      return false;
     },
     async jwt({ token, user }) {
       if (user) {

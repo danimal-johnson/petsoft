@@ -1,6 +1,6 @@
 "use client";
 
-import { logIn } from "@/actions/actions";
+import { logIn, signUp } from "@/actions/actions";
 import AuthFormBtn from "./auth-form-btn";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -9,9 +9,18 @@ type AuthFormProps = {
   method: "login" | "signup";
 }
 
+// For login form action, consider:
+// <form action={() => { 
+//   await logIn;
+//   router.push("dashboard");
+// }}>
+
 export default function AuthForm({ method }: AuthFormProps) {
+  
   return (
-        <form className="flex flex-col space-y-2" action={logIn}>
+        <form className="flex flex-col space-y-2" 
+          action={method === "login" ? logIn : signUp}
+        >
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input

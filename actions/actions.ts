@@ -23,11 +23,18 @@ export async function logIn(formData: FormData) {
   //   redirect: true,
   //   callbackUrl: "/app/dashboard"
   // }); // authData
+  console.log("actions.ts: About to sign in");
+
+  if (!(formData instanceof FormData)) {
+    console.error("Expected FormData, got:", formData);
+    // return message: "Invalid form data", error: "Expected FormData object"
+    return;
+  }
 
   await signIn("credentials", authData);
-  console.log("About to redirect");
+  console.log("actions.ts: About to redirect");
   redirect("/app/dashboard");
-  console.log("Redirected");
+  console.log("actions.ts: Redirected");
 }
 
 export async function signUp(formData: FormData) {
@@ -44,6 +51,7 @@ export async function signUp(formData: FormData) {
   });
 
   // await signUp("credentials", { email, hashedPassword }); // authData
+  await signIn("credentials", formData);
 }
 
 export async function logOut() {
